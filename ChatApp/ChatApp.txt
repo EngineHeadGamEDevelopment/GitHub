@@ -1,0 +1,29 @@
+ChatApp/
+├── main.py                          # Entry point for the chat application
+├── .gitignore                       # File to specify ignored files in Git
+├── README.md                        # Project documentation and instructions
+├── requirements.txt                 # Python dependencies
+├── modules/                         # Contains the modules for functionality
+│   ├── __init__.py                  # Makes the modules directory a Python package
+│   ├── chat_module.py               # Core chat application functionality
+│   ├── weather_module.py            # Fetches and displays weather data
+│   ├── news_module.py               # Fetches and displays news
+│   ├── currency_module.py           # Fetches currency exchange rates
+│   ├── stock_module.py              # Fetches stock data
+│   └── timezone_module.py           # Fetches timezone data
+├── resources/                       # Store assets and resources
+│   ├── data/                        # Contains JSON files for storing data
+│   │   ├── users.json               # User credentials and data
+│   │   ├── external_api_data.json   # Data fetched from APIs
+│   └── assets/                      # Store images, icons, and other assets
+│       ├── logo.png                 # Application logo
+│       ├── background.jpg           # Background image for the UI
+│       └── icons/                   # Icons for buttons and features
+│           ├── weather_icon.png
+│           ├── news_icon.png
+│           ├── currency_icon.png
+│           └── stock_icon.png
+└── tests/                           # Unit tests for the application
+    ├── test_chat_module.py          # Unit tests for chat module
+    ├── test_weather_module.py       # Unit tests for weather module
+    └── ...                          # Other test files

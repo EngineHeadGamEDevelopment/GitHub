@@ -1,0 +1,11 @@
+/Draegtile
+│
+├── /data                  # To store user data, API data
+├── /assets                # For additional assets (images, logos, etc.)
+├── /modules               # Separate logic into modules
+│      ├── __init__.py     # Makes this a package
+│      ├── auth.py         # User authentication module
+│      ├── api.py          # Handles external API calls
+│      ├── ui.py           # The main UI interface (Tkinter)
+├── main.py                # Main entry point of the program
+└── README.md              # Documentation of Draegtile system

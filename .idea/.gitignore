@@ -1,0 +1,44 @@
+# Default ignored files
+/shelf/
+/workspace.xml
+
+# Ignore Python compiled files
+*.pyc
+__pycache__/
+
+# Ignore environment folders
+env/
+venv/
+.venv/
+
+# Ignore OS-specific files
+.DS_Store
+
+# Ignore logs and temp files
+*.log
+*.tmp
+
+# Ignore IDE-specific settings (optional)
+.vscode/
+.idea/
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*.so
+
+# Environment variables
+.env
+
+# Virtual environment
+env/
+venv/
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# Logs and temporary files
+*.log
+*.tmp
+
