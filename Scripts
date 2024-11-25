@@ -6,3 +6,4 @@ strings.xml
 build.gradle
 echo.bash
 python.py
+pylint_workflow.py
