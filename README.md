@@ -193,7 +193,7 @@ This project is licensed under the MIT License. See the LICENSE file for details
 
 Contact
 
-For inquiries, bug reports, or feature requests, please reach out to Riyaad Behardien at email@example.com.
+For inquiries, bug reports, or feature requests, please reach out to Riyaad Behardien at riyaadbehardien8@gmail.com
 
 
 ---
