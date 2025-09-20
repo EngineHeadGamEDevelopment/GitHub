@@ -299,7 +299,94 @@ def main():
     engine.run_daily_tasks(api_keys=API_KEYS)
 
 if __name__ == "__main__":
-    main()
+    main(import os
+import re
+import textwrap
+
+# --- Helper functions ---
+def is_standard_lib(module_name):
+    """Detect if import is stdlib based on known modules."""
+    std_libs = {
+        "sys", "os", "time", "threading", "asyncio", "json", "datetime", "tkinter"
+    }
+    return module_name.split('.')[0] in std_libs
+
+def reorder_imports(lines):
+    """Reorder imports: stdlib -> third-party -> local."""
+    std_imports, third_party, local, others = [], [], [], []
+    for line in lines:
+        if line.startswith("import ") or line.startswith("from "):
+            mod = line.split()[1]
+            if is_standard_lib(mod):
+                std_imports.append(line)
+            elif mod.startswith(("ChatApp", "Draegtile")):
+                local.append(line)
+            else:
+                third_party.append(line)
+        else:
+            others.append(line)
+    return std_imports + third_party + local + others
+
+def remove_unused_imports(lines):
+    """Remove known unused imports."""
+    unused = [
+        "import asyncio",
+        "import sys",
+        "from datetime import datetime",
+        "from colorama import Fore, Style",
+        "import requests",
+        "from tkinter import messagebox"
+    ]
+    return [line for line in lines if not any(u in line for u in unused)]
+
+def remove_unused_vars(lines):
+    """Remove obvious unused variable assignments like 'foo = None'."""
+    return [line for line in lines if not re.match(r'^\s*\w+\s*=\s*None\s*$', line)]
+
+def add_encoding_to_open(line):
+    """Force encoding in open() calls."""
+    if 'open(' in line and 'encoding=' not in line:
+        line = re.sub(r'open([^)]+)', r'open(\1, encoding="utf-8")', line)
+    return line
+
+def wrap_long_lines(line, limit=100):
+    """Wrap long string literals."""
+    if len(line) > limit and ('"' in line or "'" in line):
+        return "\n".join(textwrap.wrap(line, width=limit, subsequent_indent="    "))
+    return line
+
+# --- Process all files ---
+py_files = []
+for root, _, files in os.walk('.'):
+    for f in files:
+        if f.endswith('.py'):
+            py_files.append(os.path.join(root, f))
+
+for py_file in py_files:
+    with open(py_file, "r", encoding="utf-8") as f:
+        lines = f.readlines()
+
+    new_lines = []
+    for line in lines:
+        line = line.rstrip()  # remove trailing ws
+        line = add_encoding_to_open(line)
+        line = wrap_long_lines(line)
+        new_lines.append(line)
+
+    # Ensure module docstring exists
+    if new_lines and not (new_lines[0].strip().startswith('"""') or new_lines[0].startswith("#")):
+        new_lines.insert(0, f'"""Module {os.path.basename(py_file)} description."""\n')
+
+    # Add class docstrings
+    i = 0
+    while i < len(new_lines):
+        if re.match(r'class\s+\w+', new_lines[i]):
+            if i + 1 < len(new_lines) and not new_lines[i+1].strip().startswith('"""'):
+                cls = re.findall(r'class\s+(\w+)', new_lines[i])[0]
+                new_lines.insert(i+1, f'    """Class {cls} description."""\n')
+        i += 1
+
+    # Clean imports & vars)
 
 
 ---
