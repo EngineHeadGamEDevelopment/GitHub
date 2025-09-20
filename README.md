@@ -153,9 +153,6 @@ Install dependencies:
 
 pip install paramiko requests numpy matplotlib pandas openai
 
-
----
-
 Step 2 — Configure API Keys
 
 Edit modules/data_management/api_manager.py:
@@ -172,10 +169,6 @@ API_KEYS = {
 
 Optional APIs can be added later for extended functionality
 
-
-
----
-
 Step 3 — Git + GPG + SSH Configuration
 
 Run the niblit_git_ai.py module:
@@ -190,15 +183,9 @@ Generates example Python code via OpenAI
 
 Pushes signed commit to GitHub
 
-
-
-
----
-
 Step 4 — Main Niblit Workflow
 
 Run the main script:
-
 
 python niblit_main.py
 
@@ -206,31 +193,19 @@ What happens:
 
 1. Autonomous configurator registers all modules
 
-
 2. Evolution engine integrates new/legacy software and hardware
-
 
 3. DNA simulations & partner modules prepare virtual constructs
 
-
 4. SDRM initializes for signal monitoring & defense
-
 
 5. Data collection begins according to scheduler (daily, per API)
 
-
 6. Billing, usage, and API tracking modules monitor activity
-
 
 7. Universal interpreter handles scripts, converts, debugs, visualizes
 
-
 8. PuTTY/SSH allows remote operations
-
-
-
-
----
 
 Step 5 — Daily Scheduler
 
@@ -238,9 +213,6 @@ Collects data once per day by default (configurable)
 
 Generates reports: logs, API usage, threats, environment, evolution updates
 
-
-
----
 
 3 — Collaborator Instructions
 
@@ -258,17 +230,12 @@ Generates reports: logs, API usage, threats, environment, evolution updates
 
 5. Request module updates using this format:
 
-
-
 Request: <task description>
 Module: <target module>
 Priority: <High/Medium/Low>
 Expected Outcome: <desired result>
 API Key / Resource: <if required>
 Notes: <additional info>
-
-
----
 
 4 — Sample niblit_main.py
 
@@ -387,9 +354,6 @@ for py_file in py_files:
         i += 1
 
     # Clean imports & vars)
-
-
----
 
 5 — Permissions & Safety
 
