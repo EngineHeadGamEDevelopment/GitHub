@@ -8,3 +8,4 @@ echo.bash
 python.py
 pylint_workflow.py
 pylint.yaml
+pylint_patch2_advanced.py
