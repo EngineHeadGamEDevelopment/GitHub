@@ -1,0 +1,11 @@
+Main activity.java
+AIModel.java
+AndroidManifest.xml
+activity_main.xml
+strings.xml
+build.gradle
+echo.bash
+python.py
+pylint_workflow.py
+pylint.yaml
+pylint_patch2_advanced.py

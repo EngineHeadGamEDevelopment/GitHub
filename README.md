@@ -1,202 +1,368 @@
-README.md
+pylint_fix_patch.py
+
+import os
+import re
+
+# Define file patterns to fix
+py_files = [f for f in os.listdir('.') if f.endswith('.py')]
+for root_dir, dirs, files in os.walk('.'):
+    for file in files:
+        if file.endswith('.py'):
+            py_files.append(os.path.join(root_dir, file))
+
+# Regex patterns
+open_pattern = re.compile(r'open\(([^)]+)\)')
+trailing_ws_pattern = re.compile(r'[ \t]+$')
+module_docstring_pattern = re.compile(r'^\s*(#.*)?$')  # placeholder for missing module docstring
+
+for py_file in py_files:
+    with open(py_file, 'r', encoding='utf-8') as f:
+        lines = f.readlines()
+
+    new_lines = []
+    added_module_docstring = False
+    for i, line in enumerate(lines):
+        # Remove trailing whitespace
+        line = trailing_ws_pattern.sub('', line)
+
+        # Add encoding to open() if missing
+        if 'open(' in line and 'encoding=' not in line:
+            line = re.sub(open_pattern, r'open(\1, encoding="utf-8")', line)
+
+        new_lines.append(line)
+
+    # Add module docstring if first non-empty line is not docstring
+    if new_lines and not (new_lines[0].strip().startswith('"""') or new_lines[0].strip().startswith('#')):
+        new_lines.insert(0, '"""Module {} description."""\n'.format(os.path.basename(py_file).replace('.py', '')))
+
+    # Add placeholder class docstrings
+    for i, line in enumerate(new_lines):
+        class_match = re.match(r'class\s+(\w+)', line)
+        if class_match:
+            # Check if next line is a docstring
+            if i + 1 < len(new_lines) and not new_lines[i + 1].strip().startswith('"""'):
+                new_lines.insert(i + 1, '    """Class {} description."""\n'.format(class_match.group(1)))
+
+    # Write back changes
+    with open(py_file, 'w', encoding='utf-8') as f:
+        f.write('\n'.join(new_lines))
+
+print(f"✅ Applied pylint fixes to {len(py_files)} Python files.")
+
+# Optional: create/update requirements.txt
+requirements = ["bcrypt", "requests", "colorama"]
+with open('requirements.txt', 'w', encoding='utf-8') as f:
+    f.write("\n".join(requirements))
+print("✅ Created/updated requirements.txt")
+# Project One
+
+**Author**: Riyaad Behardien  
+**GitHub**: [Rb9906](https://github.com/Rb9906)
+
+## Table of Contents
+1. [Overview](#overview)
+2. [Project Structure](#project-structure)
+3. [Installation](#installation)
+4. [Usage](#usage)
+5. [Modules & Features](#modules--features)
+6. [Development Guidelines](#development-guidelines)
+7. [Contributing](#contributing)
+8. [License](#license)
+
+## Overview
+**Project One** is a unified AI-powered application designed for Android devices. The project integrates AI-driven components to enhance human capabilities, provide real-time data handling, and support interactive features. The application combines elements from various projects, such as **Symtium AI Avatar-Create**, **Elysium Project**, **OAHDN (Open-Source AI-Powered Human Development Network)**, and an **RPG game** module.
+
+## Project Structure
+The repository is organized as follows:
+- **/src/** - Contains the main Android project files.
+  - **MainActivity.java** - Main interface and logic for the Android app.
+  - **AIModel.java** - Core AI functionalities using TensorFlow.
+- **/assets/** - Assets like TensorFlow model files (`model.h5`) and other resources.
+- **/game_module/** - Files for the 2D RPG game core.
+- **/docs/** - Documentation files, including this README and project instructions.
+- **README.md** - Guide and instructions for setup and usage.
+
+## Installation
+1. **Clone the Repository**
+   ```bash
+   git clone https://github.com/Rb9906/Project-One.git
+   cd Project-One
+niblit-gateway/
+├── public/
+│   └── index.html        # Main UI
+├── src/
+│   ├── components/
+│   │   ├── BrowserWindow.jsx
+│   │   ├── AIInteractionPanel.jsx
+│   │   ├── FlashPlayerEmbed.jsx
+│   ├── App.jsx
+│   └── main.js
+├── plugins/
+│   └── ...               # Directory for AI/plugin modules
+├── package.json
+├── README.md
+niblit_pro_v0_5/
+├─ modules/
+│  ├─ autonomous_configurator/    # Auto-install, register, configure software/hardware
+│  │  └─ configurator.py
+│  ├─ dna/                         # DNA simulation, chromosome conversion, stem cell modeling
+│  │  ├─ dna_analyzer.py
+│  │  ├─ dna_simulator.py
+│  │  ├─ dna_visualizer.py
+│  │  ├─ chromosome_converter.py
+│  │  └─ stem_cell_simulator.py
+│  ├─ integrator/                  # Hybrid system integration & evolution engine
+│  │  ├─ ui_engine.py
+│  │  ├─ hardware_parser.py
+│  │  ├─ software_parser.py
+│  │  ├─ hybrid_creator.py
+│  │  └─ evolution_tracker.py
+│  ├─ interpreter/                 # Universal interpreter for multiple formats
+│  │  └─ universal_interpreter.py
+│  ├─ sdrm/                        # Signal defense, collection, boosting, disruption
+│  │  ├─ signal_collector.py
+│  │  ├─ signal_converter.py
+│  │  ├─ signal_emitter.py
+│  │  ├─ signal_booster.py
+│  │  ├─ signal_disruptor.py
+│  │  └─ threat_analyzer.py
+│  ├─ nature_conservation/         # Environment & nature monitoring
+│  │  ├─ env_monitor.py
+│  │  └─ eco_optimizer.py
+│  ├─ data_management/             # API, usage, billing, tracking
+│  │  ├─ api_manager.py
+│  │  ├─ usage_tracker.py
+│  │  └─ billing_alert.py
+│  ├─ git_ai_automation/           # Git + OpenAI code generation
+│  │  └─ niblit_git_ai.py
+│  └─ puTTY/                       # SSH / remote server management
+│     └─ puTTY_module.py
+├─ niblit_main.py                  # Entry point to run all modules
+├─ requirements.txt                # All Python dependencies
+└─ README_full.md                  # Full instruction manual
+2 — Installation Instructions (Step-by-Step)
 
-Simple Weather AI App - Patch 1
+Step 1 — Environment Setup
 
-Overview
+Install Python 3 or Pydroid
 
-The Simple Weather AI App is an Android application that provides real-time weather information using AI to fetch and display data based on the user's location. This patch focuses on optimizing the app's AI capabilities, resolving issues with fetching weather data, and enhancing the UI/UX for a smoother user experience.
+Optional: NodeJS, Nexus, Citra for advanced modules
 
-Patch 1 Features
+Install dependencies:
 
-Real-time weather data based on user location.
 
-Improved data fetching and error handling for weather information.
+pip install paramiko requests numpy matplotlib pandas openai
 
-Enhanced UI for better visibility of weather updates.
+Step 2 — Configure API Keys
 
-Optimized AI model for weather predictions.
+Edit modules/data_management/api_manager.py:
 
-Bug fixes for API connectivity.
 
+API_KEYS = {
+    "openai": "YOUR_OPENAI_KEY",
+    "weather": "YOUR_WEATHER_KEY",
+    "currents": "YOUR_CURRENTS_KEY",
+    "gnews": "YOUR_GNEWS_KEY",
+    "newsapi": "YOUR_NEWSAPI_KEY",
+    "github": "YOUR_GITHUB_KEY"
+}
 
-Requirements
+Optional APIs can be added later for extended functionality
 
-Android Studio (latest version recommended)
+Step 3 — Git + GPG + SSH Configuration
 
-Java JDK 8 or higher
+Run the niblit_git_ai.py module:
 
-Gradle (compatible version)
+Generates SSH key if missing
 
-TensorFlow Lite (for AI model handling)
+Generates GPG key for signed commits
 
-Weather API Key (e.g., OpenWeatherMap)
+Configures Git username/email
 
-Internet connection (for real-time data fetching)
+Generates example Python code via OpenAI
 
+Pushes signed commit to GitHub
 
-File Structure
+Step 4 — Main Niblit Workflow
 
-SimpleWeatherAIApp/
-├── app/
-│   ├── src/
-│   │   ├── main/
-│   │   │   ├── java/
-│   │   │   │   └── com/
-│   │   │   │       └── example/
-│   │   │   │           └── simpleweatheraiapp/
-│   │   │   │               ├── MainActivity.java
-│   │   │   │               ├── WeatherService.java
-│   │   │   │               ├── WeatherData.java
-│   │   │   │               └── AIWeatherModel.java
-│   │   │   ├── res/
-│   │   │   │   ├── layout/
-│   │   │   │   │   └── activity_main.xml
-│   │   │   │   ├── values/
-│   │   │   │   │   ├── strings.xml
-│   │   │   │   │   └── styles.xml
-│   │   │   │   └── drawable/
-│   │   │   ├── assets/
-│   │   │   │   └── ai_weather_model.tflite
-│   │   │   └── AndroidManifest.xml
-│   ├── build.gradle
-│   └── proguard-rules.pro
-├── gradle/
-│   └── wrapper/
-│       ├── gradle-wrapper.properties
-│       └── gradle-wrapper.jar
-├── .gitignore
-├── build.gradle (Project)
-├── gradlew
-├── gradlew.bat
-└── settings.gradle
+Run the main script:
 
-Installation
+python niblit_main.py
 
-1. Clone the repository:
+What happens:
 
-git clone https://github.com/Rb9906/SimpleWeatherAIApp.git
+1. Autonomous configurator registers all modules
 
+2. Evolution engine integrates new/legacy software and hardware
 
-2. Open the project in Android Studio:
+3. DNA simulations & partner modules prepare virtual constructs
 
-Launch Android Studio.
+4. SDRM initializes for signal monitoring & defense
 
-Click on Open an existing Android Studio project.
+5. Data collection begins according to scheduler (daily, per API)
 
-Navigate to the SimpleWeatherAIApp directory and select it.
+6. Billing, usage, and API tracking modules monitor activity
 
+7. Universal interpreter handles scripts, converts, debugs, visualizes
 
+8. PuTTY/SSH allows remote operations
 
-3. Sync Gradle:
+Step 5 — Daily Scheduler
 
-Allow Android Studio to sync and download the necessary dependencies.
+Collects data once per day by default (configurable)
 
-Make sure all dependencies are resolved without errors.
+Generates reports: logs, API usage, threats, environment, evolution updates
 
 
+3 — Collaborator Instructions
 
-4. Add Weather API Key:
+1. Place new scripts/modules in modules/
 
-Get your API key from OpenWeatherMap.
 
-Add your key to the strings.xml file:
+2. Register in autonomous_configurator/configurator.py
 
-<string name="weather_api_key">YOUR_API_KEY_HERE</string>
 
+3. Update api_manager.py if new APIs are required
 
 
+4. Log actions in evolution_tracker.py
 
-Building and Running
 
-1. Connect your Android device or start an Android emulator.
+5. Request module updates using this format:
 
+Request: <task description>
+Module: <target module>
+Priority: <High/Medium/Low>
+Expected Outcome: <desired result>
+API Key / Resource: <if required>
+Notes: <additional info>
 
-2. Click the Run button in Android Studio or use the following command:
+4 — Sample niblit_main.py
 
-./gradlew assembleDebug
+from modules.autonomous_configurator.configurator import Configurator
+from modules.integrator.ui_engine import EvolutionEngine
+from modules.dna.chromosome_converter import ChromosomeConverter
+from modules.sdrm.threat_analyzer import ThreatAnalyzer
+from modules.data_management.api_manager import API_KEYS
 
+def main():
+    # Configure & initialize all modules
+    config = Configurator()
+    config.auto_configure_all()
 
-3. Install the APK on your device or emulator:
+    engine = EvolutionEngine()
+    engine.load_modules()
 
-./gradlew installDebug
+    # DNA example
+    converter = ChromosomeConverter()
+    x_version = converter.convert_y_to_x("Y_sample_sequence")
 
+    # Threat example
+    threat = {"id": "signal_001", "origin": "unknown", "threat_level": 7}
+    analyzer = ThreatAnalyzer()
+    print(analyzer.analyze(threat))
 
-4. Launch the App and test the weather data fetching based on your location.
+    # Run daily tasks
+    engine.run_daily_tasks(api_keys=API_KEYS)
 
+if __name__ == "__main__":
+    main(import os
+import re
+import textwrap
 
+# --- Helper functions ---
+def is_standard_lib(module_name):
+    """Detect if import is stdlib based on known modules."""
+    std_libs = {
+        "sys", "os", "time", "threading", "asyncio", "json", "datetime", "tkinter"
+    }
+    return module_name.split('.')[0] in std_libs
 
-Usage
+def reorder_imports(lines):
+    """Reorder imports: stdlib -> third-party -> local."""
+    std_imports, third_party, local, others = [], [], [], []
+    for line in lines:
+        if line.startswith("import ") or line.startswith("from "):
+            mod = line.split()[1]
+            if is_standard_lib(mod):
+                std_imports.append(line)
+            elif mod.startswith(("ChatApp", "Draegtile")):
+                local.append(line)
+            else:
+                third_party.append(line)
+        else:
+            others.append(line)
+    return std_imports + third_party + local + others
 
-1. Launch the app.
+def remove_unused_imports(lines):
+    """Remove known unused imports."""
+    unused = [
+        "import asyncio",
+        "import sys",
+        "from datetime import datetime",
+        "from colorama import Fore, Style",
+        "import requests",
+        "from tkinter import messagebox"
+    ]
+    return [line for line in lines if not any(u in line for u in unused)]
 
+def remove_unused_vars(lines):
+    """Remove obvious unused variable assignments like 'foo = None'."""
+    return [line for line in lines if not re.match(r'^\s*\w+\s*=\s*None\s*$', line)]
 
-2. Allow location permissions for real-time weather updates.
+def add_encoding_to_open(line):
+    """Force encoding in open() calls."""
+    if 'open(' in line and 'encoding=' not in line:
+        line = re.sub(r'open([^)]+)', r'open(\1, encoding="utf-8")', line)
+    return line
 
+def wrap_long_lines(line, limit=100):
+    """Wrap long string literals."""
+    if len(line) > limit and ('"' in line or "'" in line):
+        return "\n".join(textwrap.wrap(line, width=limit, subsequent_indent="    "))
+    return line
 
-3. View the weather information on the main screen.
+# --- Process all files ---
+py_files = []
+for root, _, files in os.walk('.'):
+    for f in files:
+        if f.endswith('.py'):
+            py_files.append(os.path.join(root, f))
 
+for py_file in py_files:
+    with open(py_file, "r", encoding="utf-8") as f:
+        lines = f.readlines()
 
-4. If weather data fails to load, check the internet connection or API key.
+    new_lines = []
+    for line in lines:
+        line = line.rstrip()  # remove trailing ws
+        line = add_encoding_to_open(line)
+        line = wrap_long_lines(line)
+        new_lines.append(line)
 
+    # Ensure module docstring exists
+    if new_lines and not (new_lines[0].strip().startswith('"""') or new_lines[0].startswith("#")):
+        new_lines.insert(0, f'"""Module {os.path.basename(py_file)} description."""\n')
 
+    # Add class docstrings
+    i = 0
+    while i < len(new_lines):
+        if re.match(r'class\s+\w+', new_lines[i]):
+            if i + 1 < len(new_lines) and not new_lines[i+1].strip().startswith('"""'):
+                cls = re.findall(r'class\s+(\w+)', new_lines[i])[0]
+                new_lines.insert(i+1, f'    """Class {cls} description."""\n')
+        i += 1
 
-Code Breakdown
+    # Clean imports & vars)
 
-MainActivity.java
+5 — Permissions & Safety
 
-Handles the app's primary interface, user interactions, and triggers data fetching from WeatherService.
+High-risk actions prompt for confirmation
 
-WeatherService.java
+SDRM only neutralizes real threats
 
-Manages API calls, fetching weather data, and parsing responses. Integrates AI predictions using AIWeatherModel.
+DNA & partner creation runs simulation mode first
 
-WeatherData.java
+All actions are logged for traceability
 
-A model class for handling weather-related data such as temperature, humidity, and weather conditions.
-
-AIWeatherModel.java
-
-Contains AI-based predictions for weather conditions using TensorFlow Lite model (ai_weather_model.tflite).
-
-Future Improvements
-
-Add more AI-based predictions for localized weather events.
-
-Implement offline caching of weather data.
-
-Improve UI to display weather trends over time.
-
-Add support for multiple weather APIs.
-
-
-Contributing
-
-1. Fork the repository.
-
-
-2. Create a new branch (git checkout -b feature/AmazingFeature).
-
-
-3. Commit your changes (git commit -m 'Add some AmazingFeature').
-
-
-4. Push to the branch (git push origin feature/AmazingFeature).
-
-
-5. Open a Pull Request.
-
-
-
-License
-
-This project is licensed under the MIT License. See the LICENSE file for details.
-
-Contact
-
-For inquiries, bug reports, or feature requests, please reach out to Riyaad Behardien at riyaadbehardien8@gmail.com
-
-
----
-
-Let me know if you need additional information or adjustments!
 
